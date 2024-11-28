@@ -55,7 +55,7 @@ def log_issue():
     note = note_entry.get()
     if note:
         with open("issues.txt", "a") as file:
-            file.write(note + "\n")
+            file.write('-' + note + "\n")
         note_entry.delete(0, 'end')
         show_notes()
     else:
@@ -109,7 +109,7 @@ def main():
 
     instruction_text = tk.StringVar()
     note_entry = tk.Entry(root, width=100, font=('Arial', 20))
-    notes_list = tk.Listbox(root, width=100, height=15, font=('Arial', 18))
+    notes_list = tk.Listbox(root, width=100, height=8, font=('Arial', 18))
 
     # Конструируем интерфейс с увеличенными размерами
     tk.Button(root, text="Открыть инструкции", command=open_instructions, width=25, height=2, font=('Arial', 18)).pack(pady=10)
