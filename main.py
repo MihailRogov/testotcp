@@ -58,6 +58,19 @@ def show_notes(file_path):
     except FileNotFoundError:
         print("Файл с заметками не найден.")
 
+def show_issues(file_path):
+    try:
+        with open(file_path, "r") as file:
+            issues = file.readlines()
+            if issues:
+                print("\nСписок отчетов о проблемах:")
+                for issue in issues:
+                    print(f"- {issue.strip()}")
+            else:
+                print("Отчетов о проблемах нет.")
+    except FileNotFoundError:
+        print("Файл с отчетами о проблемах не найден.")
+
 def main():
     instructions = load_instructions("instructions.json")
     issues_file = "issues.txt"
