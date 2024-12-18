@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import Tk, Label, messagebox, Toplevel
+from tkinter import ttk, messagebox, Toplevel
 import json
 from PIL import Image, ImageTk
 
@@ -23,13 +23,17 @@ def show_instruction(instruction):
     if 'text' in instruction:
         instruction_window = Toplevel()
         instruction_window.title("Инструкция")
+        instruction_window.geometry("800x600")
+        instruction_window.configure(bg="#f4f4f4")
 
         # Текст инструкции с увеличенным размером шрифта
-        instruction_label = Label(
+        instruction_label = tk.Label(
             instruction_window,
             text=instruction['text'],
             wraplength=720,
-            font=("Arial", 18)
+            font=("Arial", 16),
+            bg="#f4f4f4",
+            fg="#333333"
         )
         instruction_label.pack(pady=10)
 
@@ -37,11 +41,11 @@ def show_instruction(instruction):
         if 'image' in instruction:
             try:
                 img = Image.open(instruction['image'])
-                img = img.resize((1280, 720), Image.LANCZOS)  # Изменяем размер изображения
+                img = img.resize((640, 360), Image.LANCZOS)
                 photo = ImageTk.PhotoImage(img)
 
-                img_label = Label(instruction_window, image=photo)
-                img_label.image = photo  # Сохраняем ссылку на изображение
+                img_label = tk.Label(instruction_window, image=photo, bg="#f4f4f4")
+                img_label.image = photo
                 img_label.pack(pady=10)
             except FileNotFoundError:
                 messagebox.showerror("Ошибка", "Изображение не найдено.")
@@ -57,9 +61,10 @@ def log_issue():
         with open("issues.txt", "a") as file:
             file.write('-' + note + "\n")
         note_entry.delete(0, 'end')
-        show_notes()
+        show_issues()
     else:
         messagebox.showwarning("Предупреждение", "Введите сообщение об ошибке.")
+
 
 def show_issues():
     try:
@@ -102,30 +107,34 @@ def open_instructions():
 
 
 def main():
-    global instruction_text, note_entry, notes_list
+    global note_entry, notes_list
 
     root = tk.Tk()
     root.title("Инструкции и Заметки")
+    root.geometry("900x700")
+    root.configure(bg="#f0f0f0")
 
-    instruction_text = tk.StringVar()
-    note_entry = tk.Entry(root, width=100, font=('Arial', 20))
-    notes_list = tk.Listbox(root, width=100, height=8, font=('Arial', 18))
+    style = ttk.Style()
+    style.configure("TButton", font=("Arial", 14), padding=10)
+    style.configure("TLabel", font=("Arial", 14), background="#f0f0f0")
 
-    # Конструируем интерфейс с увеличенными размерами
-    tk.Button(root, text="Открыть инструкции", command=open_instructions, width=25, height=2, font=('Arial', 18)).pack(pady=10)
-    tk.Label(root, textvariable=instruction_text, wraplength=400, font=('Arial', 20)).pack(pady=10)
-    tk.Label(root, text="Добавить заметку или сообщение об ошибке:", font=('Arial', 20)).pack(pady=5)
+    tk.Label(root, text="Управление инструкциями и заметками", font=("Arial", 20, "bold"), bg="#f0f0f0").pack(pady=20)
+
+    ttk.Button(root, text="Открыть инструкции", command=open_instructions).pack(pady=10)
+
+    tk.Label(root, text="Добавить заметку или сообщение об ошибке:", font=("Arial", 16), bg="#f0f0f0").pack(pady=5)
+
+    note_entry = ttk.Entry(root, width=60, font=("Arial", 14))
     note_entry.pack(pady=10)
-    tk.Button(root, text="Сохранить заметку", command=make_note, width=25, height=2, font=('Arial', 18)).pack(pady=10)
-    tk.Button(root, text="Показать заметки", command=show_notes, width=25, height=2, font=('Arial', 18)).pack(pady=10)
 
-    tk.Button(root, text="Сообщить об ошибке", command=log_issue, width=25, height=2, font=('Arial', 18)).pack(pady=10)
-    tk.Button(root, text="Показать записи об ошибках", command=show_issues, width=25, height=2, font=('Arial', 18)).pack(pady=10)
-    notes_list.pack(pady=10)
+    ttk.Button(root, text="Сохранить заметку", command=make_note).pack(pady=5)
+    ttk.Button(root, text="Показать заметки", command=show_notes).pack(pady=5)
 
-    # Настроим отступы и размеры для улучшения пользовательского интерфейса
-    for widget in [note_entry, notes_list]:
-        widget.config(font=('Arial', 20))
+    ttk.Button(root, text="Сообщить об ошибке", command=log_issue).pack(pady=5)
+    ttk.Button(root, text="Показать записи об ошибках", command=show_issues).pack(pady=5)
 
-    # Начинаем главный цикл
+    notes_list = tk.Listbox(root, width=70, height=10, font=("Arial", 14))
+    notes_list.pack(pady=20)
+
     root.mainloop()
+
